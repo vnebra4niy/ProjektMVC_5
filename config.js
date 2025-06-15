@@ -1,4 +1,4 @@
 const PORT = 3000;
-TICKETMASTER_KEY= 'YfcRidqgCA5yAK2q1CAeW1hbS0nuSLjl'
+TICKETMASTER_KEY= 'CheckKeyInChat'
 
 module.exports = { PORT, TICKETMASTER_KEY };
