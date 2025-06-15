@@ -1,0 +1,4 @@
+const PORT = 3000;
+TICKETMASTER_KEY= 'YfcRidqgCA5yAK2q1CAeW1hbS0nuSLjl'
+
+module.exports = { PORT, TICKETMASTER_KEY };

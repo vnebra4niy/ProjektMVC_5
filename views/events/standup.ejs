@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+  <%- include('../partials/navigation', { menuLinks: menuLinks, activeLinkPath: '/standup' }) %>
+  <main>
+    <h1 class="heading">Stand-Up Events</h1>
+
+    <div class="event-grid">
+      <% events.forEach(event => { %>
+        <div class="event-card">
+          <img class="event-image" src="<%= event.images[0].url %>" alt="<%= event.name %>">
+          <div class="event-content">
+            <h3><%= event.name %></h3>
+            <p><%= event.dates.start.localDate %></p>
+            <p><%= event._embedded.venues[0].name %></p>
+            <% if (event.priceRanges) { %>
+              <p>Tickets from <%= event.priceRanges[0].min %> to <%= event.priceRanges[0].max %> <%= event.priceRanges[0].currency %></p>
+            <% } %>
+            <a class="details-btn"href="/events/event/<%= event.id %>">More details</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <div class="pagination">
+      <% if (currentPage > 0) { %>
+        <a href="/events/standup?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+      <% } %>
+      <a href="/events/standup?page=<%= currentPage + 1 %>">Next &raquo;</a>
+    </div>
+  </main>
+</body>
+</html>
