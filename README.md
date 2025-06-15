@@ -104,13 +104,15 @@ npm install
 ```js
 module.exports = {
   PORT: 3000,
-  TICKETMASTER_KEY: 'twoj_klucz_api'
+  TICKETMASTER_KEY: 'twoj_klucz_api',
+  DB_USER = "user",
+  DB_PASSWORD = "password323"
 };
 ```
 
 4. Skonfiguruj połączenie z MongoDB Atlas w `app.js`:
 ```js
-mongoose.connect('mongodb+srv://<user>:<haslo>@cluster.mongodb.net/ticketapp')
+mongoose.connect('mongodb+srv://${user}:${haslo}@cluster.mongodb.net/ticketapp')
 ```
 
 5. Uruchom serwer:
