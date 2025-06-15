@@ -3,6 +3,9 @@
     <meta charset="UTF-8" />
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/main.css" />
+    <style>
+
+    </style>
   </head>
   <body>
     <main>
@@ -10,27 +13,81 @@
 
       <h1 class="heading"><%= event.name %></h1>
 
-      <p><strong>Date:</strong> <%= event.dates.start.localDate %></p>
-      <p><strong>Time:</strong> <%= event.dates.start.localTime || "Not specified" %></p>
-      <p><strong>Location:</strong> <%= event._embedded.venues[0].name %></p>
-      <p><strong>City:</strong> <%= event._embedded.venues[0].city.name %></p>
+      <div class="event-details-container">
+        <% if (event.images && event.images.length > 0) { %>
+          <img class="event-detail-image" src="<%= event.images[0].url %>" alt="<%= event.name %>">
+        <% } %>
 
-      <% if (event.info) { %>
-        <p><strong>Info:</strong> <%= event.info %></p>
-      <% } %>
+        <div class="event-detail-info">
+          <p><strong>Date:</strong> <%= event.dates.start.localDate %></p>
+          <p><strong>Time:</strong> <%= event.dates.start.localTime || "Not specified" %></p>
+          <p><strong>Venue:</strong> <%= event._embedded.venues[0].name %></p>
+          <p><strong>City:</strong> <%= event._embedded.venues[0].city.name %></p>
 
-      <% if (event.priceRanges) { %>
-        <p><strong>Price:</strong> <%= event.priceRanges[0].min %> - <%= event.priceRanges[0].max %> <%= event.priceRanges[0].currency %></p>
-      <% } %>
+          <% if (event.info) { %>
+            <p><strong>Info:</strong> <%= event.info %></p>
+          <% } %>
 
-      <form method="POST" action="/reserve">
-        <label>
-          Number of tickets:
-          <input type="number" name="seats" min="1" max="10" required />
-        </label>
-        <input type="hidden" name="eventId" value="<%= event.id %>" />
-        <button type="submit">Reserve</button>
-      </form>
+          <% if (event.priceRanges) { %>
+            <p><strong>Price:</strong> <%= event.priceRanges[0].min %> – <%= event.priceRanges[0].max %> <%= event.priceRanges[0].currency %></p>
+          <% } %>
+
+          <% if (event.url) { %>
+            <p><a class="details-btn" href="<%= event.url %>" target="_blank">Buy Official Tickets</a></p>
+          <% } %>
+
+          <h2>Select your seats</h2>
+          <form method="POST" action="/reserve" id="reservation-form">
+            <input type="hidden" name="eventId" value="<%= event.id %>">
+            <input type="hidden" name="selectedSeats" id="selectedSeats">
+
+            <div class="seat-map">
+              <% for (let row = 0; row < 10; row++) { %>
+                <% for (let col = 0; col < 8; col++) { 
+                  const isReserved = reservedSeats.some(seat => seat.row === row && seat.col === col);
+                %>
+                  <div class="seat <%= isReserved ? 'reserved' : '' %>" 
+                       data-row="<%= row %>" 
+                       data-col="<%= col %>">
+                    <%= row+1 %><%= String.fromCharCode(65+col) %>
+                  </div>
+                <% } %>
+              <% } %>
+            </div>
+
+            <button type="submit" style="margin-top: 20px;">Reserve</button>
+        </form>
+        <form method="POST" action="/cancel-all">
+            <input type="hidden" name="eventId" value="<%= event.id %>">
+            <button type="submit" style="margin-top: 5px;">Clear Reservation</button>
+        </form>
+        </div>
+      </div>
     </main>
+
+    <script>
+      const seats = document.querySelectorAll('.seat:not(.reserved)');
+      const selectedSeatsInput = document.getElementById('selectedSeats');
+      const selected = new Set();
+
+      seats.forEach(seat => {
+        seat.addEventListener('click', () => {
+          const row = seat.dataset.row;
+          const col = seat.dataset.col;
+          const key = `${row}-${col}`;
+          if (selected.has(key)) {
+            selected.delete(key);
+            seat.classList.remove('selected');
+          } else {
+            selected.add(key);
+            seat.classList.add('selected');
+          }
+          selectedSeatsInput.value = JSON.stringify([...selected].map(s => {
+            const [r, c] = s.split('-');
+            return { row: parseInt(r), col: parseInt(c) };
+          }));
+        });
+      });
+    </script>
   </body>
 </html>

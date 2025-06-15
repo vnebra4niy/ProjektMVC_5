@@ -1,6 +1,7 @@
 const axios = require('axios');
 const apiKey = require('../config').TICKETMASTER_KEY;
 const { MENU_LINKS } = require("../constants/navigation");
+const Reservation = require('../models/Reservation');
 
 const fetchEvents = async (classification, page = 0) => {
   const url = `https://app.ticketmaster.com/discovery/v2/events.json?classificationName=${classification}&size=12&page=${page}&apikey=${apiKey}`;
@@ -65,11 +66,19 @@ exports.getEventDetails = async (req, res) => {
     const url = `https://app.ticketmaster.com/discovery/v2/events/${eventId}.json?apikey=${apiKey}`;
     const response = await axios.get(url);
     const event = response.data;
+
+    let reservedSeats = [];
+    const reservation = await Reservation.findOne({ eventId });
+    if (reservation) {
+      reservedSeats = reservation.reservedSeats;
+    }
+
     res.render('events/details', {
       title: event.name,
       event,
       menuLinks: MENU_LINKS,
-      activeLinkPath: `/event/${eventId}`
+      activeLinkPath: `/events/event/${eventId}`,
+      reservedSeats
     });
   } catch (error) {
     console.error("Error fetching event details:", error.message);

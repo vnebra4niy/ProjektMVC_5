@@ -184,3 +184,42 @@ main {
   text-decoration: none;
   border-radius: 6px;
 }
+
+.seat-map {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  gap: 6px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.seat {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.seat.selected {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.seat.reserved {
+  background-color: #f44336;
+  cursor: not-allowed;
+  color: white;
+}
+
+.event-detail-image {
+  max-width: 100%;
+  max-height: 400px;
+  display: block;
+  margin: 20px auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
